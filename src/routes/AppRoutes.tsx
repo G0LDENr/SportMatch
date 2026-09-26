@@ -1,6 +1,7 @@
 import {Routes, Route} from 'react-router-dom';
 
 import Login from '../pages/auth/Login';
+import Register from '../pages/auth/Registro';
 import Inicio from '../pages/auth/Inicio';
 
 function AppRoutes() {
@@ -8,6 +9,7 @@ function AppRoutes() {
         <Routes>
             {/*Rutas Auth*/}
             <Route path="/" element={<Login/>}/>
+            <Route path='/registro' element={< Register/>}/>
             <Route path="/inicio" element={<Inicio/>}/>
 
             {/*Rutas protegidas*/}

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { motion } from 'framer-motion';
-import ConstructionIcon from '../../assets/images/Logo-SportMatch.webp';
+import ConstructionIcon from '../../assets/icons/Logo-SportMatch.webp';
 
 const Inicio: FC = () => {
     return (
