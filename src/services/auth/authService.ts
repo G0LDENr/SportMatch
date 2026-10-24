@@ -11,6 +11,7 @@ export interface Usuario {
   estado_cuenta: string;
   ultimo_acceso?: string | null;
   registro_completo_en?: string | null;
+  foto_perfil?: string | null; // SIMULADO
 }
 
 export interface AuthResponse {
@@ -23,36 +24,44 @@ export interface RegisterPayload {
   nombre_usuario: string;
   correo: string;
   password: string;
-  fecha_nacimiento: string; // "YYYY-MM-DD"
+  fecha_nacimiento: string;
   sexo: string;
   telefono?: string;
   ciudad_id?: number;
 }
 
-// ============================================================
-// Configuración base
-// ============================================================
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
+const API_URL = process.env.REACT_APP_API_URL ?? "http://localhost:5000";
 
 const TOKEN_KEY = "access_token";
 const USER_KEY = "usuario";
+const FOTO_KEY = "foto_perfil"; // SIMULADO
 
-// ============================================================
-// Fetch genérico tipado
-// ============================================================
+function getToken(): string | null {
+  return (
+    sessionStorage.getItem(TOKEN_KEY) ??
+    localStorage.getItem(TOKEN_KEY)
+  );
+}
+
+function getUser(): Usuario | null {
+  const raw =
+    sessionStorage.getItem(USER_KEY) ??
+    localStorage.getItem(USER_KEY);
+  return raw ? (JSON.parse(raw) as Usuario) : null;
+}
+
 interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
-  auth?: boolean; // si true, agrega el Bearer token automáticamente
+  auth?: boolean;
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = "GET", body, auth = false } = options;
-
   const headers: Record<string, string> = { "Content-Type": "application/json" };
 
   if (auth) {
-    const token = authService.getToken();
+    const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
   }
 
@@ -73,29 +82,24 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   return data as T;
 }
 
-// ============================================================
-// Servicio de autenticación
-// ============================================================
 export const authService = {
-  // ---------- Persistencia de sesión ----------
   saveSession(token: string, usuario: Usuario, remember: boolean): void {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(USER_KEY);
+
     const storage = remember ? localStorage : sessionStorage;
     storage.setItem(TOKEN_KEY, token);
     storage.setItem(USER_KEY, JSON.stringify(usuario));
+    // ⚠️ NO se toca FOTO_KEY aquí: la foto simulada es independiente
   },
 
-  getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY) ?? sessionStorage.getItem(TOKEN_KEY);
-  },
-
-  getUser(): Usuario | null {
-    const raw =
-      localStorage.getItem(USER_KEY) ?? sessionStorage.getItem(USER_KEY);
-    return raw ? (JSON.parse(raw) as Usuario) : null;
-  },
+  getToken,
+  getUser,
 
   isAuthenticated(): boolean {
-    return this.getToken() !== null;
+    return getToken() !== null;
   },
 
   logout(): void {
@@ -103,9 +107,9 @@ export const authService = {
       s.removeItem(TOKEN_KEY);
       s.removeItem(USER_KEY);
     });
+    localStorage.removeItem(FOTO_KEY); // 👈 limpia la foto simulada
   },
 
-  // ---------- Endpoints ----------
   login(correo: string, password: string): Promise<AuthResponse> {
     return request<AuthResponse>("/api/auth/login", {
       method: "POST",
@@ -136,5 +140,26 @@ export const authService = {
 
   me(): Promise<Usuario> {
     return request<Usuario>("/api/auth/me", { auth: true });
+  },
+
+  actualizarPerfil(payload: {
+    nombre_completo?: string;
+    nombre_usuario?: string;
+  }): Promise<Usuario> {
+    return request<Usuario>("/api/usuarios/me", {
+      method: "PUT",
+      body: payload,
+      auth: true,
+    });
+  },
+
+  // ===== SIMULACIÓN DE FOTO DE PERFIL =====
+  getFotoPerfil(): string | null {
+    return localStorage.getItem(FOTO_KEY);
+  },
+
+  setFotoPerfil(url: string | null): void {
+    if (url) localStorage.setItem(FOTO_KEY, url);
+    else localStorage.removeItem(FOTO_KEY);
   },
 };

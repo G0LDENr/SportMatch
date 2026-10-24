@@ -21,7 +21,7 @@ import { Button } from "../../components/ui/Button/Button";
 import { IconButton } from "../../components/ui/Button/IconButton";
 import { BackButton } from "../../components/ui/Button/BackButton";
 import { Select } from "../../components/ui/Select/Select";
-import { authService } from "../../services/authService";
+import { authService } from "../../services/auth/authService";
 
 import LoginBg from "../../assets/images/LoginBg.webp";
 import Logo from "../../assets/icons/Logo-SportMatch.webp";
@@ -118,7 +118,7 @@ const Register = () => {
       });
 
       authService.saveSession(data.access_token, data.usuario, false);
-      navigate("/inicio");
+      navigate("/perfil");
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo registrar");
     } finally {
@@ -334,7 +334,7 @@ const Register = () => {
 
       <p className="text-center text-sm text-gray-500 mt-8">
         ¿Ya tienes cuenta?{" "}
-        <Link to="/" className="text-brand-400 font-medium hover:underline">
+        <Link to="/login" className="text-brand-400 font-medium hover:underline">
           Inicia sesión aquí
         </Link>
       </p>

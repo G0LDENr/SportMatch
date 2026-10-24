@@ -9,7 +9,8 @@ import { InputPassword } from "../../components/ui/Input/InputPassword";
 import { Checkbox } from "../../components/ui/Checkbox/Checkbox";
 import { Button } from "../../components/ui/Button/Button";
 import { IconButton } from "../../components/ui/Button/IconButton";
-import { authService } from "../../services/authService";
+
+import { authService } from "../../services/auth/authService";
 
 import LoginBg from "../../assets/images/LoginBg.webp";
 import Logo from "../../assets/icons/Logo-SportMatch.webp";
