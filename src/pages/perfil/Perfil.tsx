@@ -14,6 +14,51 @@ export default function Perfil() {
   const [activeTab, setActiveTab] = useState('insignias');
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const insignias = [
+    {
+      id: 1,
+      nombre: 'Bienvenido',
+      descripcion: 'Completaste tu registro',
+      icono: '👋',
+      desbloqueada: true,
+    },
+    {
+      id: 2,
+      nombre: 'Primeros pasos',
+      descripcion: 'Completaste tu perfil',
+      icono: '🌟',
+      desbloqueada: true,
+    },
+    {
+      id: 3,
+      nombre: 'Social',
+      descripcion: 'Agregaste a tu primer amigo',
+      icono: '🤝',
+      desbloqueada: false,
+    },
+    {
+      id: 4,
+      nombre: 'Explorador',
+      descripcion: 'Participaste en tu primer evento',
+      icono: '🏆',
+      desbloqueada: false,
+    },
+    {
+      id: 5,
+      nombre: 'Creador',
+      descripcion: 'Publicaste tu primer video',
+      icono: '🎬',
+      desbloqueada: false,
+    },
+    {
+      id: 6,
+      nombre: 'Popular',
+      descripcion: 'Conseguiste 100 seguidores',
+      icono: '🔥',
+      desbloqueada: false,
+    },
+  ];
+
 
   useEffect(() => {
     const cargar = async () => {
@@ -149,10 +194,77 @@ export default function Perfil() {
       </div>
 
       <div className="mt-4 bg-white rounded-xl shadow-sm border border-slate-200 p-5 min-h-[150px]">
-        <p className="text-sm text-slate-400 text-center">
-          Contenido de{' '}
-          <span className="font-semibold text-slate-600">{activeTab}</span>
-        </p>
+
+        {activeTab === 'insignias' && (
+            <div>
+              <div className="flex justify-between items-center mb-5">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900">
+                    Mis insignias
+                  </h2>
+                  <p className="text-sm text-slate-500">
+                    Tus logros y reconocimientos
+                  </p>
+                </div>
+
+                <span className="text-sm font-semibold text-blue-600">
+          {insignias.filter(i => i.desbloqueada).length}/{insignias.length}
+        </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {insignias.map(insignia => (
+                    <div
+                        key={insignia.id}
+                        className={`rounded-xl border p-4 text-center transition ${
+                            insignia.desbloqueada
+                                ? 'bg-blue-50 border-blue-200'
+                                : 'bg-slate-50 border-slate-200 opacity-50 grayscale'
+                        }`}
+                    >
+                      <div className="text-4xl mb-3">
+                        {insignia.icono}
+                      </div>
+
+                      <h3 className="text-sm font-bold text-slate-800">
+                        {insignia.nombre}
+                      </h3>
+
+                      <p className="text-xs text-slate-500 mt-1">
+                        {insignia.descripcion}
+                      </p>
+
+                      <span className={`inline-block mt-3 text-[10px] font-semibold px-2 py-1 rounded-full ${
+                          insignia.desbloqueada
+                              ? 'bg-blue-100 text-blue-700'
+                              : 'bg-slate-200 text-slate-500'
+                      }`}>
+              {insignia.desbloqueada ? 'Desbloqueada' : 'Bloqueada'}
+            </span>
+                    </div>
+                ))}
+              </div>
+            </div>
+        )}
+
+        {activeTab === 'videos' && (
+            <p className="text-center text-sm text-slate-400">
+              Aquí aparecerán tus videos.
+            </p>
+        )}
+
+        {activeTab === 'amigos' && (
+            <p className="text-center text-sm text-slate-400">
+              Aquí aparecerán tus amigos.
+            </p>
+        )}
+
+        {activeTab === 'eventos' && (
+            <p className="text-center text-sm text-slate-400">
+              Aquí aparecerán tus eventos.
+            </p>
+        )}
+
       </div>
 
       <EditProfileModal
